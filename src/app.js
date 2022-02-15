@@ -31,14 +31,7 @@ app.post("/company/create", (req, res) => {
   });
 
   const value = schema.validate(req.body);
-  const {
-    companyName,
-    companyURL,
-    companyAddress,
-    recruiterName,
-    recruiterEmail,
-    recruiterNumber,
-  } = req.body;
+  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
   console.log(value);
 
   if (value.error) res.send(value.error);
@@ -49,7 +42,6 @@ app.post("/company/create", (req, res) => {
   const id = uuidv4();
   const knex = require("knex")({
     client: "postgres",
-    version: "14.1",
     connection: {
       host: "localhost",
       port: 5432,
@@ -59,15 +51,17 @@ app.post("/company/create", (req, res) => {
     },
   });
 
-  knex("company").insert({
-    id,
-    companyName,
-    companyURL,
-    companyAddress,
-    recruiterName,
-    recruiterEmail,
-    recruiterNumber,
-  });
+  knex("company")
+    .insert({
+      id,
+      companyName,
+      companyURL,
+      companyAddress,
+      recruiterName,
+      recruiterEmail,
+      recruiterNumber,
+    })
+    .then(() => {});
 
   res.send("ok");
 });
