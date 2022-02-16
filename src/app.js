@@ -91,6 +91,17 @@ app.get("/company/:companyId", (req, res) => {
     });
 });
 
+app.get("/company", (req, res) => {
+  // get query out from req
+
+  // validate query
+
+  // get result from db
+  knex("company").then((companyList) => {
+    res.send(companyList);
+  });
+});
+
 app.post("/job/create", (req, res) => {
   // validate body
   const schema = Joi.object({
