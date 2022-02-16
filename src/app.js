@@ -59,11 +59,6 @@ app.post("/company/create", (req, res) => {
   res.send("ok");
 });
 
-/*
- * SELECT * FROM compnay
- * WHERE id = :companyId
- */
-
 app.get("/company/:companyId", (req, res) => {
   const schema = Joi.object({
     companyId: Joi.string().guid({
