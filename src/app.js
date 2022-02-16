@@ -1,5 +1,3 @@
-// import { v4 as uuidv4 } from "uuid";
-
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -35,14 +33,7 @@ app.post("/company/create", (req, res) => {
   });
 
   const value = schema.validate(req.body);
-  const {
-    companyName,
-    companyURL,
-    companyAddress,
-    recruiterName,
-    recruiterEmail,
-    recruiterNumber,
-  } = req.body;
+  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
   console.log(value);
 
   if (value.error) {
@@ -68,6 +59,44 @@ app.post("/company/create", (req, res) => {
   res.send("ok");
 });
 
+app.get("/company/:companyId", (req, res) => {
+  const schema = Joi.object({
+    companyId: Joi.string().guid({
+      version: ["uuidv4", "uuidv5"],
+    }),
+  });
+
+  const companyId = req.params.companyId;
+
+  const value = schema.validate({ companyId });
+
+  if (value.error) {
+    // menaing of different error codes:
+    res.status(400);
+    res.send(value.error);
+    return;
+  }
+
+  knex("company")
+    .where({ id: companyId })
+    .then((queryResult) => {
+      const company = queryResult[0];
+
+      res.send(company);
+    });
+});
+
+app.get("/company", (req, res) => {
+  // get query out from req
+
+  // validate query
+
+  // get result from db
+  knex("company").then((companyList) => {
+    res.send(companyList);
+  });
+});
+
 app.post("/job/create", (req, res) => {
   // validate body
   const schema = Joi.object({
@@ -85,16 +114,8 @@ app.post("/job/create", (req, res) => {
   });
 
   const value = schema.validate(req.body);
-  const {
-    companyId,
-    jobTitle,
-    jobLocation,
-    jobDescription,
-    jobRequirement,
-    jobExperienceLevel,
-    jobType,
-    jobSalary,
-  } = req.body;
+  const { companyId, jobTitle, jobLocation, jobDescription, jobRequirement, jobExperienceLevel, jobType, jobSalary } =
+    req.body;
   console.log(value);
 
   if (value.error) {
