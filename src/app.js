@@ -6,6 +6,16 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const Joi = require("joi");
 const { v4: uuidv4 } = require("uuid");
+const knex = require("knex")({
+  client: "postgres",
+  connection: {
+    host: "localhost",
+    port: 5432,
+    user: "postgres",
+    password: "postgres",
+    database: "help_me_apply",
+  },
+});
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -40,20 +50,8 @@ app.post("/company/create", (req, res) => {
     return;
   }
 
-  // try catch?
-
   // generate uuid and add to db
   const id = uuidv4();
-  const knex = require("knex")({
-    client: "postgres",
-    connection: {
-      host: "localhost",
-      port: 5432,
-      user: "postgres",
-      password: "postgres",
-      database: "help_me_apply",
-    },
-  });
 
   knex("company")
     .insert({
@@ -106,16 +104,6 @@ app.post("/job/create", (req, res) => {
 
   // generate uuid and add to db
   const id = uuidv4();
-  const knex = require("knex")({
-    client: "postgres",
-    connection: {
-      host: "localhost",
-      port: 5432,
-      user: "postgres",
-      password: "postgres",
-      database: "help_me_apply",
-    },
-  });
 
   knex("job")
     .insert({
