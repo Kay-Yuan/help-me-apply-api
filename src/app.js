@@ -101,14 +101,13 @@ app.get("/company", (req, res) => {
     return;
   }
   const offset = req.query.offset;
-  const limit = req.query.limit ?? 5;
+  const limit = 5;
 
   // validate query
   const schema = Joi.object({
     offset: Joi.number(),
-    limit: Joi.number(),
   });
-  const value = schema.validate({ offset, limit });
+  const value = schema.validate({ offset });
   if (value.error) {
     res.status(400);
     res.send(value.error);
