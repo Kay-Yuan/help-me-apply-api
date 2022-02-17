@@ -33,7 +33,14 @@ app.post("/company/create", (req, res) => {
   });
 
   const value = schema.validate(req.body);
-  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
+  const {
+    companyName,
+    companyURL,
+    companyAddress,
+    recruiterName,
+    recruiterEmail,
+    recruiterNumber,
+  } = req.body;
   console.log(value);
 
   if (value.error) {
@@ -88,13 +95,33 @@ app.get("/company/:companyId", (req, res) => {
 
 app.get("/company", (req, res) => {
   // get query out from req
+  if (!req.query.offset) {
+    res.status(400);
+    res.send("/company request need a query for offset!");
+    return;
+  }
+  const offset = req.query.offset;
+  const limit = req.query.limit ?? 5;
 
   // validate query
+  const schema = Joi.object({
+    offset: Joi.number(),
+    limit: Joi.number(),
+  });
+  const value = schema.validate({ offset, limit });
+  if (value.error) {
+    res.status(400);
+    res.send(value.error);
+    return;
+  }
 
   // get result from db
-  knex("company").then((companyList) => {
-    res.send(companyList);
-  });
+  knex("company")
+    .limit(limit)
+    .offset(offset)
+    .then((companyList) => {
+      res.send(companyList);
+    });
 });
 
 app.post("/job/create", (req, res) => {
@@ -110,12 +137,20 @@ app.post("/job/create", (req, res) => {
     jobRequirement: Joi.string(),
     jobExperienceLevel: Joi.string(),
     jobType: Joi.string(),
-    jobSalary: Joi.string(),
+    jobSalaryRange: Joi.string(),
   });
 
   const value = schema.validate(req.body);
-  const { companyId, jobTitle, jobLocation, jobDescription, jobRequirement, jobExperienceLevel, jobType, jobSalary } =
-    req.body;
+  const {
+    companyId,
+    jobTitle,
+    jobLocation,
+    jobDescription,
+    jobRequirement,
+    jobExperienceLevel,
+    jobType,
+    jobSalaryRange,
+  } = req.body;
   console.log(value);
 
   if (value.error) {
@@ -136,7 +171,7 @@ app.post("/job/create", (req, res) => {
       jobRequirement,
       jobExperienceLevel,
       jobType,
-      jobSalary,
+      jobSalaryRange,
     })
     .then(() => {});
 
