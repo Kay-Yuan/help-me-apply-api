@@ -5,7 +5,7 @@
 exports.up = async function (knex) {
   await knex.schema.createTable("job", function (table) {
     table.uuid("id").primary();
-    table.integer("companyId").unique().notNullable();
+    table.uuid("companyId").notNullable();
     table.string("jobTitle").notNullable();
     table.string("jobLocation").nullable();
     table.string("jobDescription").nullable();
