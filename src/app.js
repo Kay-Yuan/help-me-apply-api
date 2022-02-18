@@ -123,13 +123,17 @@ app.get("/company", (req, res) => {
     });
 });
 
-app.post("/job/create", (req, res) => {
+app.post("/jobs/create", (req, res) => {
   // validate body
   const schema = Joi.object({
     id: Joi.string().guid({
       version: ["uuidv4", "uuidv5"],
     }),
-    companyId: Joi.number().required(),
+    companyId: Joi.string()
+      .guid({
+        version: ["uuidv4", "uuidv5"],
+      })
+      .required(),
     jobTitle: Joi.string().required(),
     jobLocation: Joi.string(),
     jobDescription: Joi.string(),
@@ -175,6 +179,63 @@ app.post("/job/create", (req, res) => {
     .then(() => {});
 
   res.send("ok");
+});
+
+app.get("/jobs/:jobId", (req, res) => {
+  const schema = Joi.object({
+    jobId: Joi.string().guid({
+      version: ["uuidv4", "uuidv5"],
+    }),
+  });
+
+  const jobId = req.params.jobId;
+
+  const value = schema.validate({ jobId });
+
+  if (value.error) {
+    // menaing of different error codes:
+    res.status(400);
+    res.send(value.error);
+    return;
+  }
+
+  knex("job")
+    .where({ id: jobId })
+    .then((queryResult) => {
+      const company = queryResult[0];
+
+      res.send(company);
+    });
+});
+
+app.get("/jobs", (req, res) => {
+  // get query out from req
+  if (!req.query.offset) {
+    res.status(400);
+    res.send("/jobs request need a query for offset!");
+    return;
+  }
+  const offset = req.query.offset;
+  const limit = 5;
+
+  // validate query
+  const schema = Joi.object({
+    offset: Joi.number(),
+  });
+  const value = schema.validate({ offset });
+  if (value.error) {
+    res.status(400);
+    res.send(value.error);
+    return;
+  }
+
+  // get result from db
+  knex("job")
+    .limit(limit)
+    .offset(offset)
+    .then((jobList) => {
+      res.send(jobList);
+    });
 });
 
 app.get("/", function (req, res) {
