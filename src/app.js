@@ -15,38 +15,13 @@ const knex = require("knex")({
   },
 });
 
+const { createCompanySchema, getCompanySchema } = require("./schema/company.schema");
+
 app.use(bodyParser.json());
 app.use(cors());
 
-app.post("/company/create", (req, res) => {
-  // validate body
-  const schema = Joi.object({
-    id: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-    companyName: Joi.string().required(),
-    companyURL: Joi.string().hostname().required(),
-    companyAddress: Joi.string(),
-    recruiterName: Joi.string(),
-    recruiterEmail: Joi.string().email(),
-    recruiterNumber: Joi.string(),
-  });
-
-  const value = schema.validate(req.body);
-  const {
-    companyName,
-    companyURL,
-    companyAddress,
-    recruiterName,
-    recruiterEmail,
-    recruiterNumber,
-  } = req.body;
-  console.log(value);
-
-  if (value.error) {
-    res.send(value.error);
-    return;
-  }
+app.post("/company/create", createCompanySchema, (req, res) => {
+  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
@@ -61,35 +36,33 @@ app.post("/company/create", (req, res) => {
       recruiterEmail,
       recruiterNumber,
     })
-    .then(() => {});
+    .then(() => {})
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
 
-  res.send("ok");
+  res.send({ message: "company created" });
 });
 
-app.get("/company/:companyId", (req, res) => {
-  const schema = Joi.object({
-    companyId: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-  });
-
+app.get("/company/:companyId", getCompanySchema, (req, res) => {
   const companyId = req.params.companyId;
-
-  const value = schema.validate({ companyId });
-
-  if (value.error) {
-    // menaing of different error codes:
-    res.status(400);
-    res.send(value.error);
-    return;
-  }
 
   knex("company")
     .where({ id: companyId })
     .then((queryResult) => {
       const company = queryResult[0];
 
-      res.send(company);
+      if (company) {
+        res.send(company);
+      } else {
+        res.status(400);
+        res.send({ message: "company not found" });
+      }
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
     });
 });
 
@@ -154,7 +127,9 @@ app.post("/jobs/create", (req, res) => {
     jobType,
     jobSalaryRange,
   } = req.body;
+  console.log("######");
   console.log(value);
+  console.log("######");
 
   if (value.error) {
     res.send(value.error);
