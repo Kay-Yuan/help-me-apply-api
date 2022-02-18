@@ -15,13 +15,30 @@ const knex = require("knex")({
   },
 });
 
-const { createCompanySchema, getCompanySchema } = require("./schema/company.schema");
+const {
+  createCompanySchema,
+  getCompanySchema,
+  getCompaniesSchema,
+} = require("./schema/company.schema");
+
+const {
+  createJobSchema,
+  getJobSchema,
+  getJobsSchema,
+} = require("./schema/job.schema");
 
 app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/company/create", createCompanySchema, (req, res) => {
-  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
+  const {
+    companyName,
+    companyURL,
+    companyAddress,
+    recruiterName,
+    recruiterEmail,
+    recruiterNumber,
+  } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
@@ -66,7 +83,7 @@ app.get("/company/:companyId", getCompanySchema, (req, res) => {
     });
 });
 
-app.get("/company", (req, res) => {
+app.get("/company", getCompaniesSchema, (req, res) => {
   // get query out from req
   if (!req.query.offset) {
     res.status(400);
@@ -76,47 +93,20 @@ app.get("/company", (req, res) => {
   const offset = req.query.offset;
   const limit = 5;
 
-  // validate query
-  const schema = Joi.object({
-    offset: Joi.number(),
-  });
-  const value = schema.validate({ offset });
-  if (value.error) {
-    res.status(400);
-    res.send(value.error);
-    return;
-  }
-
   // get result from db
   knex("company")
     .limit(limit)
     .offset(offset)
     .then((companyList) => {
       res.send(companyList);
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
     });
 });
 
-app.post("/jobs/create", (req, res) => {
-  // validate body
-  const schema = Joi.object({
-    id: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-    companyId: Joi.string()
-      .guid({
-        version: ["uuidv4", "uuidv5"],
-      })
-      .required(),
-    jobTitle: Joi.string().required(),
-    jobLocation: Joi.string(),
-    jobDescription: Joi.string(),
-    jobRequirement: Joi.string(),
-    jobExperienceLevel: Joi.string(),
-    jobType: Joi.string(),
-    jobSalaryRange: Joi.string(),
-  });
-
-  const value = schema.validate(req.body);
+app.post("/jobs/create", createJobSchema, (req, res) => {
   const {
     companyId,
     jobTitle,
@@ -127,14 +117,6 @@ app.post("/jobs/create", (req, res) => {
     jobType,
     jobSalaryRange,
   } = req.body;
-  console.log("######");
-  console.log(value);
-  console.log("######");
-
-  if (value.error) {
-    res.send(value.error);
-    return;
-  }
 
   // generate uuid and add to db
   const id = uuidv4();
@@ -156,34 +138,28 @@ app.post("/jobs/create", (req, res) => {
   res.send("ok");
 });
 
-app.get("/jobs/:jobId", (req, res) => {
-  const schema = Joi.object({
-    jobId: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-  });
-
+app.get("/jobs/:jobId", getJobSchema, (req, res) => {
   const jobId = req.params.jobId;
-
-  const value = schema.validate({ jobId });
-
-  if (value.error) {
-    // menaing of different error codes:
-    res.status(400);
-    res.send(value.error);
-    return;
-  }
 
   knex("job")
     .where({ id: jobId })
     .then((queryResult) => {
       const job = queryResult[0];
 
-      res.send(job);
+      if (job) {
+        res.send(job);
+      } else {
+        res.status(400);
+        res.send({ message: "job not found" });
+      }
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
     });
 });
 
-app.get("/jobs", (req, res) => {
+app.get("/jobs", getJobsSchema, (req, res) => {
   // get query out from req
   if (!req.query.offset) {
     res.status(400);
@@ -193,23 +169,16 @@ app.get("/jobs", (req, res) => {
   const offset = req.query.offset;
   const limit = 5;
 
-  // validate query
-  const schema = Joi.object({
-    offset: Joi.number(),
-  });
-  const value = schema.validate({ offset });
-  if (value.error) {
-    res.status(400);
-    res.send(value.error);
-    return;
-  }
-
   // get result from db
   knex("job")
     .limit(limit)
     .offset(offset)
     .then((jobList) => {
       res.send(jobList);
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
     });
 });
 
