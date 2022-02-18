@@ -23,7 +23,14 @@ const getCompanySchema = Joi.object().keys({
   },
 });
 
+const getCompaniesSchema = Joi.object().keys({
+  params: {
+    offset: Joi.number(),
+  },
+});
+
 module.exports = {
   createCompanySchema: joiMiddleware(createCompanySchema),
   getCompanySchema: joiMiddleware(getCompanySchema),
+  getCompaniesSchema: joiMiddleware(getCompaniesSchema),
 };
