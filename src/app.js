@@ -202,9 +202,9 @@ app.get("/jobs/:jobId", (req, res) => {
   knex("job")
     .where({ id: jobId })
     .then((queryResult) => {
-      const company = queryResult[0];
+      const job = queryResult[0];
 
-      res.send(company);
+      res.send(job);
     });
 });
 
