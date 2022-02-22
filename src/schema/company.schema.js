@@ -23,9 +23,33 @@ const getCompanySchema = Joi.object().keys({
   },
 });
 
+const deleteCompanySchema = Joi.object().keys({
+  params: {
+    companyId: Joi.string().guid({
+      version: ["uuidv4", "uuidv5"],
+    }),
+  },
+});
+
 const getCompaniesSchema = Joi.object().keys({
   params: {
     offset: Joi.number(),
+  },
+});
+
+const updateCompanySchema = Joi.object().keys({
+  params: {
+    id: Joi.string().guid({
+      version: ["uuidv4", "uuidv5"],
+    }),
+  },
+  body: {
+    companyName: Joi.string(),
+    companyURL: Joi.string().hostname(),
+    companyAddress: Joi.string(),
+    recruiterName: Joi.string(),
+    recruiterEmail: Joi.string().email(),
+    recruiterNumber: Joi.string(),
   },
 });
 
@@ -33,4 +57,6 @@ module.exports = {
   createCompanySchema: joiMiddleware(createCompanySchema),
   getCompanySchema: joiMiddleware(getCompanySchema),
   getCompaniesSchema: joiMiddleware(getCompaniesSchema),
+  deleteCompanySchema: joiMiddleware(deleteCompanySchema),
+  updateCompanySchema: joiMiddleware(updateCompanySchema),
 };

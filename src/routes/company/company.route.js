@@ -3,10 +3,23 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
 
-const { createCompanySchema, getCompanySchema, getCompaniesSchema } = require("../../schema/company.schema");
+const {
+  createCompanySchema,
+  getCompanySchema,
+  getCompaniesSchema,
+  deleteCompanySchema,
+  updateCompanySchema,
+} = require("../../schema/company.schema");
 
 router.post("/create", createCompanySchema, (req, res) => {
-  const { companyName, companyURL, companyAddress, recruiterName, recruiterEmail, recruiterNumber } = req.body;
+  const {
+    companyName,
+    companyURL,
+    companyAddress,
+    recruiterName,
+    recruiterEmail,
+    recruiterNumber,
+  } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
@@ -72,6 +85,52 @@ router.get("/", getCompaniesSchema, (req, res) => {
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
+});
+
+router.delete("/:companyId", deleteCompanySchema, (req, res) => {
+  const companyId = req.params.companyId;
+
+  knex("company")
+    .where({ id: companyId })
+    .del()
+    .then(() => {})
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
+
+  res.send({ message: "company deleted" });
+});
+
+router.put("/:companyId", updateCompanySchema, (req, res) => {
+  const companyId = req.params.companyId;
+
+  const {
+    companyName,
+    companyURL,
+    companyAddress,
+    recruiterName,
+    recruiterEmail,
+    recruiterNumber,
+  } = req.body;
+
+  knex("company")
+    .where({ id: companyId })
+    .update({
+      companyName,
+      companyURL,
+      companyAddress,
+      recruiterName,
+      recruiterEmail,
+      recruiterNumber,
+    })
+    .then(() => {})
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
+
+  res.send({ message: "company updated" });
 });
 
 module.exports = router;

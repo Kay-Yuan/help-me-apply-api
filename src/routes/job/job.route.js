@@ -3,7 +3,13 @@ const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
 
-const { createJobSchema, getJobSchema, getJobsSchema } = require("../../schema/job.schema");
+const {
+  createJobSchema,
+  getJobSchema,
+  getJobsSchema,
+  deleteJobSchema,
+  updateJobSchema,
+} = require("../../schema/job.schema");
 
 router.post("/create", createJobSchema, (req, res) => {
   const {
@@ -79,6 +85,54 @@ router.get("/", getJobsSchema, (req, res) => {
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
+});
+
+router.delete("/:jobId", deleteJobSchema, (req, res) => {
+  const jobId = req.params.jobId;
+
+  knex("job")
+    .where({ id: jobId })
+    .del()
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
+
+  res.send({ message: "job deleted" });
+});
+
+router.put("/:jobId", updateJobSchema, (req, res) => {
+  const jobId = req.params.jobId;
+
+  const {
+    companyId,
+    jobTitle,
+    jobLocation,
+    jobDescription,
+    jobRequirement,
+    jobExperienceLevel,
+    jobType,
+    jobSalaryRange,
+  } = req.body;
+
+  knex("job")
+    .where({ id: jobId })
+    .update({
+      companyId,
+      jobTitle,
+      jobLocation,
+      jobDescription,
+      jobRequirement,
+      jobExperienceLevel,
+      jobType,
+      jobSalaryRange,
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
+
+  res.send({ message: "job updated" });
 });
 
 module.exports = router;
