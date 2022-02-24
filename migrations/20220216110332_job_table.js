@@ -5,7 +5,6 @@
 exports.up = async function (knex) {
   await knex.schema.createTable("job", function (table) {
     table.uuid("id").primary();
-    table.uuid("companyId").notNullable();
     table.string("jobLink").nullable();
     table.string("jobTitle").notNullable();
     table.string("jobLocation").nullable();
@@ -18,6 +17,12 @@ exports.up = async function (knex) {
     table.string("jobSalaryRange").nullable();
     // active, inactive
     table.boolean("jobStatus").notNullable();
+    table
+      .uuid("companyId")
+      .notNullable()
+      .references("id")
+      .inTable("company")
+      .onDelete("CASCADE");
   });
   return knex.raw("GRANT ALL PRIVILEGES ON job TO postgres;");
 };

@@ -31,6 +31,7 @@ exports.seed = async function (knex) {
       jobExperienceLevel: "Junior",
       jobType: "full-time",
       jobSalaryRange: "56000 - 80000",
+      jobStatus: true,
     },
     {
       id: uuidv4(),
@@ -42,6 +43,7 @@ exports.seed = async function (knex) {
       jobExperienceLevel: "Junior",
       jobType: "full-time",
       jobSalaryRange: "56000 - 80000",
+      jobStatus: true,
     },
     {
       id: uuidv4(),
@@ -53,18 +55,21 @@ exports.seed = async function (knex) {
       jobExperienceLevel: "Junior",
       jobType: "full-time",
       jobSalaryRange: "40000 - 50000",
+      jobStatus: false,
     },
     {
       id: uuidv4(),
       companyId: companyIds[3],
       jobTitle: "Apple Service Technician",
       jobLocation: "BrisbaneCBD - Inner Suburbs",
-      jobDescription: "We are seeking an experienced, self-motivated Apple technician.",
+      jobDescription:
+        "We are seeking an experienced, self-motivated Apple technician.",
       jobRequirement:
         "Apple Certification, Hp, Lenovo or Samsung Certification is desired, Excellent forward planning and personal workflow management skills",
       jobExperienceLevel: "Mid",
       jobType: "full-time",
       jobSalaryRange: "70000 - 90000",
+      jobStatus: false,
     },
     {
       id: uuidv4(),
@@ -78,6 +83,7 @@ exports.seed = async function (knex) {
       jobExperienceLevel: "Senior",
       jobType: "part-time",
       jobSalaryRange: "",
+      jobStatus: true,
     },
   ]);
 };
