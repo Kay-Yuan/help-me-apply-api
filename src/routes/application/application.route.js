@@ -27,7 +27,7 @@ router.post("/create", createApplicationSchema, (req, res) => {
     })
     .then(() => {});
 
-  res.send("ok");
+  res.send({ message: "Application created" });
 });
 
 router.get("/:applicationId", getApplicationSchema, (req, res) => {

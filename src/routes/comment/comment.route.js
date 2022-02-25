@@ -26,7 +26,7 @@ router.post("/create", createCommentSchema, (req, res) => {
     })
     .then(() => {});
 
-  res.send("ok");
+  res.send({ message: "Comment created" });
 });
 
 router.get("/:commentId", getCommentSchema, (req, res) => {

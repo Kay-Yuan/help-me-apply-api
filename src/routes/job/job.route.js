@@ -40,7 +40,7 @@ router.post("/create", createJobSchema, (req, res) => {
     })
     .then(() => {});
 
-  res.send("ok");
+  res.send({ message: "Job created" });
 });
 
 router.get("/:jobId", getJobSchema, (req, res) => {
