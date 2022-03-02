@@ -11,6 +11,7 @@ exports.up = async function (knex) {
     table.string("recruiterName").nullable();
     table.string("recruiterEmail").nullable();
     table.string("recruiterNumber").nullable();
+    table.integer("rate").nullable();
   });
   return knex.raw("GRANT ALL PRIVILEGES ON company TO postgres;");
 };
