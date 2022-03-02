@@ -23,5 +23,5 @@ exports.up = async function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = function (knex) {
-  return knex.schema.dropTable("job");
+  return knex.schema.dropTable("application");
 };

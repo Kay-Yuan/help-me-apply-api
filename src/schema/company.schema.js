@@ -12,6 +12,7 @@ const createCompanySchema = Joi.object().keys({
     recruiterName: Joi.string(),
     recruiterEmail: Joi.string().email(),
     recruiterNumber: Joi.string(),
+    rate: Joi.number().min(0).max(100),
   },
 });
 

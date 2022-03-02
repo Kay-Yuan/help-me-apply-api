@@ -19,6 +19,7 @@ router.post("/create", createCompanySchema, (req, res) => {
     recruiterName,
     recruiterEmail,
     recruiterNumber,
+    rate,
   } = req.body;
 
   // generate uuid and add to db
@@ -33,6 +34,7 @@ router.post("/create", createCompanySchema, (req, res) => {
       recruiterName,
       recruiterEmail,
       recruiterNumber,
+      rate,
     })
     .then(() => {})
     .catch(() => {
@@ -72,7 +74,7 @@ router.get("/", getCompaniesSchema, (req, res) => {
     return;
   }
   const offset = req.query.offset;
-  const limit = 5;
+  const limit = 10;
 
   // get result from db
   knex("company")
@@ -112,6 +114,7 @@ router.put("/:companyId", updateCompanySchema, (req, res) => {
     recruiterName,
     recruiterEmail,
     recruiterNumber,
+    rate,
   } = req.body;
 
   knex("company")
@@ -123,6 +126,7 @@ router.put("/:companyId", updateCompanySchema, (req, res) => {
       recruiterName,
       recruiterEmail,
       recruiterNumber,
+      rate,
     })
     .then(() => {})
     .catch(() => {
