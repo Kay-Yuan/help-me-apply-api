@@ -36,13 +36,13 @@ router.post("/create", createCompanySchema, (req, res) => {
       recruiterNumber,
       rate,
     })
-    .then(() => {})
+    .then(() => {
+      res.send({ message: "company created" });
+    })
     .catch(() => {
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
-
-  res.send({ message: "company created" });
 });
 
 router.get("/:companyId", getCompanySchema, (req, res) => {
