@@ -7,7 +7,9 @@ const createCompanySchema = Joi.object().keys({
       version: ["uuidv4", "uuidv5"],
     }),
     companyName: Joi.string().required(),
-    companyURL: Joi.string().hostname().required(),
+    companyURL: Joi.string()
+      .uri({ scheme: ["https", "http"] })
+      .required(),
     companyAddress: Joi.string(),
     recruiterName: Joi.string(),
     recruiterEmail: Joi.string().email(),
