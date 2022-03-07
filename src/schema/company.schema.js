@@ -56,10 +56,15 @@ const updateCompanySchema = Joi.object().keys({
   },
 });
 
+const searchCompanySchema = Joi.object().keys({
+  prarms: { name: Joi.string().required().max(200) },
+});
+
 module.exports = {
   createCompanySchema: joiMiddleware(createCompanySchema),
   getCompanySchema: joiMiddleware(getCompanySchema),
   getCompaniesSchema: joiMiddleware(getCompaniesSchema),
   deleteCompanySchema: joiMiddleware(deleteCompanySchema),
   updateCompanySchema: joiMiddleware(updateCompanySchema),
+  searchCompanySchema: joiMiddleware(searchCompanySchema),
 };
