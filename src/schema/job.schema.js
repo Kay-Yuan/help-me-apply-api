@@ -18,6 +18,7 @@ const createJobSchema = Joi.object().keys({
     jobExperienceLevel: Joi.string(),
     jobType: Joi.string(),
     jobSalaryRange: Joi.string(),
+    jobStatus: Joi.string().valid("true", "false").required(),
   },
 });
 

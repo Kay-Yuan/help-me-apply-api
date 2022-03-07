@@ -21,10 +21,12 @@ router.post("/create", createJobSchema, (req, res) => {
     jobExperienceLevel,
     jobType,
     jobSalaryRange,
+    jobStatus,
   } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
+  const jobStatusBoolean = jobStatus === "true" ? true : false;
 
   knex("job")
     .insert({
@@ -37,10 +39,17 @@ router.post("/create", createJobSchema, (req, res) => {
       jobExperienceLevel,
       jobType,
       jobSalaryRange,
+      jobStatus: jobStatusBoolean,
     })
-    .then(() => {});
+    .then(() => {
+      res.send({ message: "Job created" });
+    })
+    .catch((e) => {
+      console.log(e);
 
-  res.send({ message: "Job created" });
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
 });
 
 router.get("/:jobId", getJobSchema, (req, res) => {
@@ -72,7 +81,7 @@ router.get("/", getJobsSchema, (req, res) => {
     return;
   }
   const offset = req.query.offset;
-  const limit = 5;
+  const limit = 10;
 
   // get result from db
   knex("job")
