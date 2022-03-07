@@ -11,6 +11,9 @@ const createJobSchema = Joi.object().keys({
         version: ["uuidv4", "uuidv5"],
       })
       .required(),
+    jobLink: Joi.string()
+      .uri({ scheme: ["https", "http"] })
+      .required(),
     jobTitle: Joi.string().required(),
     jobLocation: Joi.string(),
     jobDescription: Joi.string(),
