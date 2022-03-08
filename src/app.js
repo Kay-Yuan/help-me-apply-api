@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+import logger from "./logger";
 
 const companyRouter = require("./routes/company/company.route");
 const jobRouter = require("./routes/job/job.route");
@@ -24,4 +25,4 @@ app.use("/application", applicationRouter);
 
 app.use("/comment", commentRouter);
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () => logger.info(`Server started on port ${PORT}`));
