@@ -109,7 +109,9 @@ router.get("/", getCompaniesSchema, (req, res) => {
 		.then((companyList) => {
 			res.send(companyList);
 		})
-		.catch(() => {
+		.catch((e) => {
+			logger.error(e);
+
 			res.status(500);
 			res.send("INTERNAL SERVER ERROR");
 		});

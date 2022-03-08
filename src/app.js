@@ -25,5 +25,4 @@ app.use("/application", applicationRouter);
 
 app.use("/comment", commentRouter);
 
-// app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 app.listen(PORT, () => logger.info(`Server started on port ${PORT}`));
