@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
+import logger from "../../logger";
 
 const {
 	createCompanySchema,
@@ -38,9 +39,13 @@ router.post("/create", createCompanySchema, (req, res) => {
 			rate,
 		})
 		.then(() => {
+			logger.info("company created");
+
 			res.send({ message: "company created" });
 		})
-		.catch(() => {
+		.catch((e) => {
+			logger.error(e);
+
 			res.status(500);
 			res.send("INTERNAL SERVER ERROR");
 		});
