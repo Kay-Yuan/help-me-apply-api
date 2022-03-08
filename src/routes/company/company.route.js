@@ -9,6 +9,7 @@ const {
 	getCompaniesSchema,
 	deleteCompanySchema,
 	updateCompanySchema,
+	searchCompanySchema,
 } = require("../../schema/company.schema");
 
 router.post("/create", createCompanySchema, (req, res) => {
@@ -38,6 +39,26 @@ router.post("/create", createCompanySchema, (req, res) => {
 		})
 		.then(() => {
 			res.send({ message: "company created" });
+		})
+		.catch(() => {
+			res.status(500);
+			res.send("INTERNAL SERVER ERROR");
+		});
+});
+
+router.get("/search", searchCompanySchema, (req, res) => {
+	const search = req.query.name;
+
+	knex("company")
+		.where("companyName", "ilike", `%${search}%`)
+		.then((queryResult) => {
+			console.log(queryResult);
+
+			if (queryResult.length) {
+				res.send(queryResult.slice(0, 5));
+			} else {
+				res.send({ message: "company not found" });
+			}
 		})
 		.catch(() => {
 			res.status(500);
