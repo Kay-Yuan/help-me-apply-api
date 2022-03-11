@@ -52,12 +52,12 @@ router.post("/create", createCompanySchema, (req, res) => {
 });
 
 router.get("/search", searchCompanySchema, (req, res) => {
-  const search = req.query.name;
+  const companyName = req.query.companyName;
 
   knex("company")
-    .where("companyName", "ilike", `%${search}%`)
+    .where("companyName", "ilike", `%${companyName}%`)
     .then((queryResult) => {
-      console.log(queryResult);
+      logger.info(queryResult);
 
       if (queryResult.length) {
         res.send(queryResult.slice(0, 5));
@@ -65,7 +65,9 @@ router.get("/search", searchCompanySchema, (req, res) => {
         res.send({ message: "company not found" });
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -86,7 +88,9 @@ router.get("/:companyId", getCompanySchema, (req, res) => {
         res.send({ message: "company not found" });
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -124,7 +128,9 @@ router.delete("/:companyId", deleteCompanySchema, (req, res) => {
     .where({ id: companyId })
     .del()
     .then(() => {})
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -157,7 +163,9 @@ router.put("/:companyId", updateCompanySchema, (req, res) => {
       rate,
     })
     .then(() => {})
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });

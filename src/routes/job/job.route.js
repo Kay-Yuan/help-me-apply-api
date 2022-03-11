@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
+const { default: logger } = require("../../logger");
 
 const {
   createJobSchema,
@@ -55,6 +56,8 @@ router.post("/create", createJobSchema, (req, res) => {
 router.get("/", getJobsSchema, (req, res) => {
   // get query out from req
   if (!req.query.offset) {
+    logger.error("No offset in query!");
+
     res.status(400);
     res.send("/jobs request need a query for offset!");
     return;
@@ -69,7 +72,9 @@ router.get("/", getJobsSchema, (req, res) => {
     .then((jobList) => {
       res.send(jobList);
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -78,19 +83,37 @@ router.get("/", getJobsSchema, (req, res) => {
 router.get("/search", getJobsSchema, (req, res) => {
   // get query out from req
   const jobTitle = req.query.jobTitle;
+  if (req.query.companyId) {
+    // get result from db
+    knex("job")
+      .where("jobTitle", "ilike", `%${jobTitle}%`)
+      .andWhere("companyId", `${req.query.companyId}`)
+      .then((jobList) => {
+        if (jobList.length) res.send(jobList.slice(0, 5));
+        else res.send({ message: "job not found" });
+      })
+      .catch((e) => {
+        logger.error(e);
 
-  // get result from db
-  knex("job")
-    .where("jobTitle", "ilike", `%${jobTitle}%`)
+        res.status(500);
+        res.send("INTERNAL SERVER ERROR");
+      });
+  } else {
+    // get result from db
+    knex("job")
+      .where("jobTitle", "ilike", `%${jobTitle}%`)
 
-    .then((jobList) => {
-      if (jobList.length) res.send(jobList.slice(0, 5));
-      else res.send({ message: "job not found" });
-    })
-    .catch(() => {
-      res.status(500);
-      res.send("INTERNAL SERVER ERROR");
-    });
+      .then((jobList) => {
+        if (jobList.length) res.send(jobList.slice(0, 5));
+        else res.send({ message: "job not found" });
+      })
+      .catch((e) => {
+        logger.error(e);
+
+        res.status(500);
+        res.send("INTERNAL SERVER ERROR");
+      });
+  }
 });
 
 router.get("/:jobId", getJobSchema, (req, res) => {
@@ -108,7 +131,9 @@ router.get("/:jobId", getJobSchema, (req, res) => {
         res.send({ message: "job not found" });
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -120,7 +145,9 @@ router.delete("/:jobId", deleteJobSchema, (req, res) => {
   knex("job")
     .where({ id: jobId })
     .del()
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -154,7 +181,9 @@ router.put("/:jobId", updateJobSchema, (req, res) => {
       jobType,
       jobSalaryRange,
     })
-    .catch(() => {
+    .catch((e) => {
+      logger.error(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });

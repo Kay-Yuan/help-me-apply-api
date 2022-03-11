@@ -3,10 +3,6 @@ const joiMiddleware = require("../middlewares/joiMiddleware");
 
 const createApplicationSchema = Joi.object().keys({
   body: {
-    id: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-    dateCreated: Joi.date().timestamp().required(),
     applicationStatus: Joi.string(),
     expectedSalary: Joi.number(),
     jobId: Joi.string().guid({

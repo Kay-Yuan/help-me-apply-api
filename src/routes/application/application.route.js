@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
+const { default: logger } = require("../../logger");
 
 const {
   createApplicationSchema,
@@ -12,10 +13,11 @@ const {
 } = require("../../schema/application.schema");
 
 router.post("/create", createApplicationSchema, (req, res) => {
-  const { dateCreated, applicationStatus, expectedSalary, jobId } = req.body;
+  const { applicationStatus, expectedSalary, jobId } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
+  const dateCreated = new Date().toISOString();
 
   knex("application")
     .insert({
@@ -45,7 +47,9 @@ router.get("/:applicationId", getApplicationSchema, (req, res) => {
         res.send({ message: "application not found" });
       }
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -68,7 +72,9 @@ router.get("/", getApplicationsSchema, (req, res) => {
     .then((applicationList) => {
       res.send(applicationList);
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -80,7 +86,9 @@ router.delete("/:applicationId", deleteApplicationSchema, (req, res) => {
   knex("application")
     .where({ id: applicationId })
     .del()
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
@@ -101,7 +109,9 @@ router.put("/:applicationId", updateApplicationSchema, (req, res) => {
       expectedSalary,
       jobId,
     })
-    .catch(() => {
+    .catch((e) => {
+      console.log(e);
+
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
