@@ -116,6 +116,35 @@ router.get("/search", getJobsSchema, (req, res) => {
   }
 });
 
+router.get("/lists", getJobsSchema, (req, res) => {
+  // get query out from req
+  if (!req.query.offset) {
+    logger.error("No offset in query!");
+
+    res.status(400);
+    res.send("/jobs/lists request need a query for offset!");
+    return;
+  }
+  const offset = req.query.offset;
+  const limit = 10;
+
+  // get result from db
+  knex("job")
+    .join("company", "job.companyId", "company.id")
+    .select("job.*", "company.companyName")
+    .limit(limit)
+    .offset(offset)
+    .then((jobList) => {
+      res.send(jobList);
+    })
+    .catch((e) => {
+      logger.error(e);
+
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
+});
+
 router.get("/:jobId", getJobSchema, (req, res) => {
   const jobId = req.params.jobId;
 
