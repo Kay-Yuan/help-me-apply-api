@@ -9,7 +9,7 @@ const companyData = [
     recruiterName: "Tom Smith",
     recruiterEmail: "t.smith@coles.com.au",
     recruiterNumber: "0412-345-678",
-    rate: 10,
+    rate: 1,
   },
   {
     id: uuidv4(),
@@ -29,7 +29,7 @@ const companyData = [
     recruiterName: "Chirs Water",
     recruiterEmail: "chris@aldi.com.au",
     recruiterNumber: "04223-456-000",
-    rate: 70,
+    rate: 4,
   },
   {
     id: uuidv4(),
@@ -39,7 +39,7 @@ const companyData = [
     recruiterName: "James Hardon",
     recruiterEmail: "James.H@apple.com.au",
     recruiterNumber: "0432-098-765",
-    rate: 90,
+    rate: 5,
   },
   {
     id: uuidv4(),
@@ -49,7 +49,7 @@ const companyData = [
     recruiterName: "Artur Gohar",
     recruiterEmail: "artur.gohar@nike.com.au",
     recruiterNumber: "04001-936-111",
-    rate: 20,
+    rate: 2,
   },
 ];
 

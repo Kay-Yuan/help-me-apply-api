@@ -10,11 +10,11 @@ const createCompanySchema = Joi.object().keys({
     companyURL: Joi.string()
       .uri({ scheme: ["https", "http"] })
       .required(),
-    companyAddress: Joi.string().trim(),
-    recruiterName: Joi.string().trim(),
+    companyAddress: Joi.string().trim().allow(""),
+    recruiterName: Joi.string().trim().allow(""),
     recruiterEmail: Joi.string().email(),
-    recruiterNumber: Joi.string().trim(),
-    rate: Joi.number().min(0).max(100),
+    recruiterNumber: Joi.string().trim().allow(""),
+    rate: Joi.number().optional().min(0).max(5).allow(null),
   },
 });
 
@@ -51,10 +51,10 @@ const updateCompanySchema = Joi.object().keys({
     companyURL: Joi.string()
       .uri({ scheme: ["https", "http"] })
       .required(),
-    companyAddress: Joi.string().trim(),
-    recruiterName: Joi.string().trim(),
+    companyAddress: Joi.string().trim().allow(""),
+    recruiterName: Joi.string().trim().allow(""),
     recruiterEmail: Joi.string().email(),
-    recruiterNumber: Joi.string().trim(),
+    recruiterNumber: Joi.string().trim().allow(""),
   },
 });
 
