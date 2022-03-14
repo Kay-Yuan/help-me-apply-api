@@ -162,15 +162,15 @@ router.put("/:companyId", updateCompanySchema, (req, res) => {
       recruiterNumber,
       rate,
     })
-    .then(() => {})
+    .then(() => {
+      res.json({ message: "company updated" });
+    })
     .catch((e) => {
       logger.error(e);
 
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
-
-  res.send({ message: "company updated" });
 });
 
 module.exports = router;
