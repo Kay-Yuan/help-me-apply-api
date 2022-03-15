@@ -15,13 +15,13 @@ const createJobSchema = Joi.object().keys({
       .uri({ scheme: ["https", "http"] })
       .required(),
     jobTitle: Joi.string().required(),
-    jobLocation: Joi.string(),
-    jobDescription: Joi.string(),
-    jobRequirement: Joi.string(),
-    jobExperienceLevel: Joi.string(),
-    jobType: Joi.string(),
-    jobSalaryRange: Joi.string(),
-    jobStatus: Joi.string().valid("true", "false").required(),
+    jobLocation: Joi.string().trim().allow(""),
+    jobDescription: Joi.string().trim().allow(""),
+    jobRequirement: Joi.string().trim().allow(""),
+    jobExperienceLevel: Joi.string().trim().allow(""),
+    jobType: Joi.string().trim().allow(""),
+    jobSalaryRange: Joi.string().trim().allow(""),
+    jobStatus: Joi.boolean().required(),
   },
 });
 
@@ -48,16 +48,22 @@ const updateJobSchema = Joi.object().keys({
     }),
   },
   body: {
-    companyId: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-    jobTitle: Joi.string(),
-    jobLocation: Joi.string(),
-    jobDescription: Joi.string(),
-    jobRequirement: Joi.string(),
-    jobExperienceLevel: Joi.string(),
-    jobType: Joi.string(),
-    jobSalaryRange: Joi.string(),
+    companyId: Joi.string()
+      .guid({
+        version: ["uuidv4", "uuidv5"],
+      })
+      .required(),
+    jobLink: Joi.string()
+      .uri({ scheme: ["https", "http"] })
+      .required(),
+    jobTitle: Joi.string().trim().required(),
+    jobLocation: Joi.string().trim().allow(""),
+    jobDescription: Joi.string().trim().allow(""),
+    jobRequirement: Joi.string().trim().allow(""),
+    jobExperienceLevel: Joi.string().trim().allow(""),
+    jobType: Joi.string().trim().allow(""),
+    jobSalaryRange: Joi.string().trim().allow(""),
+    jobStatus: Joi.boolean().required(),
   },
 });
 

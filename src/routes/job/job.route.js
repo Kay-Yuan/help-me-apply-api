@@ -15,6 +15,7 @@ const {
 router.post("/create", createJobSchema, (req, res) => {
   const {
     companyId,
+    jobLink,
     jobTitle,
     jobLocation,
     jobDescription,
@@ -33,6 +34,7 @@ router.post("/create", createJobSchema, (req, res) => {
     .insert({
       id,
       companyId,
+      jobLink,
       jobTitle,
       jobLocation,
       jobDescription,
@@ -147,9 +149,12 @@ router.get("/lists", getJobsSchema, (req, res) => {
 
 router.get("/:jobId", getJobSchema, (req, res) => {
   const jobId = req.params.jobId;
+  logger.info(jobId);
 
   knex("job")
     .where({ id: jobId })
+    // .select("job.*", "company.companyName")
+    // .join("company", "job.companyId", "company.id")
     .then((queryResult) => {
       const job = queryResult[0];
 
@@ -186,22 +191,25 @@ router.delete("/:jobId", deleteJobSchema, (req, res) => {
 
 router.put("/:jobId", updateJobSchema, (req, res) => {
   const jobId = req.params.jobId;
-
   const {
     companyId,
     jobTitle,
+    jobLink,
     jobLocation,
     jobDescription,
     jobRequirement,
     jobExperienceLevel,
     jobType,
     jobSalaryRange,
+    jobStatus,
   } = req.body;
+  // const jobStatusBoolean = jobStatus === "true" ? true : false;
 
   knex("job")
     .where({ id: jobId })
     .update({
       companyId,
+      jobLink,
       jobTitle,
       jobLocation,
       jobDescription,
@@ -209,6 +217,10 @@ router.put("/:jobId", updateJobSchema, (req, res) => {
       jobExperienceLevel,
       jobType,
       jobSalaryRange,
+      jobStatus,
+    })
+    .then(() => {
+      res.json({ message: "job updated" });
     })
     .catch((e) => {
       logger.error(e);
@@ -216,8 +228,6 @@ router.put("/:jobId", updateJobSchema, (req, res) => {
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });
-
-  res.send({ message: "job updated" });
 });
 
 module.exports = router;
