@@ -34,7 +34,6 @@ const updateApplicationSchema = Joi.object().keys({
     }),
   },
   body: {
-    dateCreated: Joi.date().timestamp().required(),
     applicationStatus: Joi.string(),
     expectedSalary: Joi.number(),
     jobId: Joi.string().guid({
