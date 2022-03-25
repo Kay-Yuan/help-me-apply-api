@@ -153,8 +153,6 @@ router.get("/:jobId", getJobSchema, (req, res) => {
 
   knex("job")
     .where({ id: jobId })
-    // .select("job.*", "company.companyName")
-    // .join("company", "job.companyId", "company.id")
     .then((queryResult) => {
       const job = queryResult[0];
 

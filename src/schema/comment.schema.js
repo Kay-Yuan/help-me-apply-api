@@ -3,10 +3,6 @@ const joiMiddleware = require("../middlewares/joiMiddleware");
 
 const createCommentSchema = Joi.object().keys({
   body: {
-    id: Joi.string().guid({
-      version: ["uuidv4", "uuidv5"],
-    }),
-    dateCreated: Joi.date().timestamp().required(),
     content: Joi.string(),
     applicationId: Joi.string().guid({
       version: ["uuidv4", "uuidv5"],
@@ -51,10 +47,21 @@ const getCommentsSchema = Joi.object().keys({
   },
 });
 
+const getCommentByApplicationIdSchema = Joi.object().keys({
+  params: {
+    applicationId: Joi.string().guid({
+      version: ["uuidv4", "uuidv5"],
+    }),
+  },
+});
+
 module.exports = {
   createCommentSchema: joiMiddleware(createCommentSchema),
   getCommentSchema: joiMiddleware(getCommentSchema),
   getCommentsSchema: joiMiddleware(getCommentsSchema),
+  getCommentByApplicationIdSchema: joiMiddleware(
+    getCommentByApplicationIdSchema
+  ),
   deleteCommentSchema: joiMiddleware(deleteCommentSchema),
   updateCommentSchema: joiMiddleware(updateCommentSchema),
 };

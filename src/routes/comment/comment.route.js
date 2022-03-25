@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const knex = require("../../config/db");
+const { default: logger } = require("../../logger");
 
 const {
   createCommentSchema,
@@ -12,10 +13,11 @@ const {
 } = require("../../schema/comment.schema");
 
 router.post("/create", createCommentSchema, (req, res) => {
-  const { dateCreated, content, applicationId } = req.body;
+  const { content, applicationId } = req.body;
 
   // generate uuid and add to db
   const id = uuidv4();
+  const dateCreated = new Date();
 
   knex("comment")
     .insert({
@@ -27,6 +29,34 @@ router.post("/create", createCommentSchema, (req, res) => {
     .then(() => {});
 
   res.send({ message: "Comment created" });
+});
+
+router.get("/byapplicationid", getCommentsSchema, (req, res) => {
+  logger.info("hello i am here");
+  // get query out from req
+  if (!req.query.applicationId) {
+    res.status(400);
+    res.send("/comments request need a query for application id!");
+    return;
+  }
+  const applicationId = req.query.applicationId;
+
+  // get result from db
+  knex("comment")
+    .where({ applicationId })
+    .then((queryResult) => {
+      if (queryResult) {
+        logger.info(queryResult);
+        res.send(queryResult);
+      } else {
+        res.status(400);
+        res.send({ message: "comment for this application not found" });
+      }
+    })
+    .catch(() => {
+      res.status(500);
+      res.send("INTERNAL SERVER ERROR");
+    });
 });
 
 router.get("/:commentId", getCommentSchema, (req, res) => {
@@ -79,7 +109,8 @@ router.delete("/:commentId", deleteCommentSchema, (req, res) => {
   knex("comment")
     .where({ id: commentId })
     .del()
-    .catch(() => {
+    .catch((e) => {
+      logger.info(e)
       res.status(500);
       res.send("INTERNAL SERVER ERROR");
     });

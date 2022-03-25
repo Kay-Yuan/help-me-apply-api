@@ -48,6 +48,8 @@ router.get("/:applicationId", getApplicationSchema, (req, res) => {
 
   knex("application")
     .where({ id: applicationId })
+    // .join("comment", "comment.applicationId", "application.id")
+    // .select("application.*", "commnet.dataCreated", "comment.content")
     .then((queryResult) => {
       const application = queryResult[0];
 
